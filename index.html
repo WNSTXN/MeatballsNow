@@ -1,26 +1,27 @@
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head><title>
+<!-- saved from url=(0054)https://oas3.relsystems.net:86/GoRes.aspx?branchId=2#! -->
+<html xmlns="http://www.w3.org/1999/xhtml" style="" class="js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths desktop landscape windows windows10 windows10_0 64bit chrome chrome87 chrome87_0 webkit en-gb"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>
 	REL Queue
-</title><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" /><link rel="stylesheet" href="css/bootstrap.min.css" />
-    <script type="text/javascript" src="Scripts/modernizr.js"></script>
-    <script type="text/javascript" src="Scripts/jquery-3.5.1.slim.min.js"></script>
-    <script type="text/javascript" src="Scripts/jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="Scripts/jquery-ui-1.9.0.min.js"></script>
-    <script type="text/javascript" src="Scripts/jquery.blockUI.js"></script>
-    <script type="text/javascript" src="Scripts/idle-timer.js"></script>
-    <script type="text/javascript" src="Scripts/popper.min.js"></script>
-    <script type="text/javascript" src="Scripts/bootstrap.min.js"></script>
+</title><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"><link rel="stylesheet" href="./REL Queue_files/bootstrap.min.css">
+    <script type="text/javascript" src="./REL Queue_files/modernizr.js.download"></script>
+    <script type="text/javascript" src="./REL Queue_files/jquery-3.5.1.slim.min.js.download"></script>
+    <script type="text/javascript" src="./REL Queue_files/jquery-1.9.1.js.download"></script>
+    <script type="text/javascript" src="./REL Queue_files/jquery-ui-1.9.0.min.js.download"></script>
+    <script type="text/javascript" src="./REL Queue_files/jquery.blockUI.js.download"></script>
+    <script type="text/javascript" src="./REL Queue_files/idle-timer.js.download"></script>
+    <script type="text/javascript" src="./REL Queue_files/popper.min.js.download"></script>
+    <script type="text/javascript" src="./REL Queue_files/bootstrap.min.js.download"></script>
 
-    <link rel="stylesheet" href="css/font-awesome.min.css" /><link rel="stylesheet" href="css/styleRes.css" />
-    <script type="text/javascript" src="Scripts/default.js"></script>
-    <script type="text/javascript" src="Scripts/util.js"></script>
-    <script type="text/javascript" src="Scripts/REL.js"></script>
-    <script type="text/javascript" src="Scripts/RELSettings.js"></script>
-    <script type="text/javascript" src="Scripts/RELGeoLoc.js"></script>
+    <link rel="stylesheet" href="./REL Queue_files/font-awesome.min.css"><link rel="stylesheet" href="./REL Queue_files/styleRes.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&display=swap" rel="stylesheet">
+	<script type="text/javascript" src="./REL Queue_files/default.js.download"></script>
+    <script type="text/javascript" src="./REL Queue_files/util.js.download"></script>
+    <script type="text/javascript" src="./REL Queue_files/REL.js.download"></script>
+    <script type="text/javascript" src="./REL Queue_files/RELSettings.js.download"></script>
+    <script type="text/javascript" src="./REL Queue_files/RELGeoLoc.js.download"></script>
 </head>
-<body>
+<body class="vsc-initialized" style="">
     <div class="container">
         <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -71,82 +72,74 @@
         </div>
         
         <div id="boxContent">
-            <div id="loading"></div>
-            <div class="form-row vertical-center" id="Main">
+            <div id="loading" style="display: none;"></div>
+            <div class="form-row vertical-center" id="Main" style="display: none;">
                 <div class="container-fluid mt-5">
                     <div class="h1 text-center">
-                        Welcome to<br />
+                        Welcome to<br>
                         IKEA Restaurant
                     </div>
                 </div>
                 <div class="text-center mt-5 pt-5">
                     <div class="h3">Kindly enable your location service before clicking "Begin"</div>
-                    <button class="btn btn-primary btn-lg mt-5" onclick="checkOperationTime('ButtonMain1',function(){getLocation();});">Begin</button>
+                    <button class="btn btn-primary btn-lg mt-5" onclick="checkOperationTime(&#39;ButtonMain1&#39;,function(){getLocation();});">Begin</button>
                 </div>
                 <div class="h3 text-danger mt-2 text-center" id="geoErrMsg"></div>
             </div>
-            <div class="form-row vertical-center" id="GetQueue">
+            <div class="form-row vertical-center" id="GetQueue" style="display: none;">
                 <div class="container-fluid mt-5">
                     <div class="h1 text-left">
                         <p class="font-weight-bold">Hej,</p>
                         <p class="h4">Our IKEA Restaurant is currently full. Please register below to join the queue. We will send you a text once your table is ready.</p>
                     </div>
                 </div>
-                <br />
+                <br>
                 <div class="container">
                     <div class="h5">Mobile number</div>
                     <div class="input-group input-group">
-                        <select id="ddlCC" class="form-control">
-                            <option value="65">Singapore (65)</option>
-                        </select>
+                        <select id="ddlCC" class="form-control"><option value="65">Singapore (65)</option></select>
                         <input id="txtMobile" type="number" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off" placeholder="Mobile" pattern="\d*">
                     </div>
                     <div class="input-group input-group mt-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text text-white rel-color-1">Number of People</span>
                         </div>
-                        <select id="ddlPax" class="form-control">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                        </select>
+                        <select id="ddlPax" class="form-control"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
                     </div>
-                    <button type="button" class="btn btn-primary btn-lg btn-block rel-color-1 mt-3" onclick="checkOperationTime('ButtonMain1',function(){playAudio(); submit();});">Submit</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block rel-color-1 mt-3" onclick="checkOperationTime(&#39;ButtonMain1&#39;,function(){playAudio(); submit();});">Submit</button>
                 </div>
             </div>
-            <div class="form-row" id="collectQueueETicket">
+            <div class="form-row" id="collectQueueETicket" style="display: block;">
                 <div class="container-fluid mt-5">
                     <div class="float-right w-25">
                         <button class="btn btn-primary" onclick="cancelClick();">Cancel</button>
                     </div>
-                    <div contenteditable="true" class="float-left h5 text-center w-75" id="queuePax">Table for : 4 person</div>
-                    <br /><br />
+                    <div class="float-left h5 text-center w-75" id="queuePax">Table for 1 person</div>
+                    <br><br>
                     <div class="card">
-                        <div contenteditable="true" class="card-header h5 text-center" id="queuePosText" style="color: Black;">Your Queue position is at:</div>
+                        <div class="card-header h5 text-center" id="queuePosText" style="color: Black;">Your Queue position is at:</div>
                         <div style="width: 100%; display: flex; justify-content: center;">
-                            <div id="qid10" class="qInfo ">10</div>
-                            <div id="qid9" class="qInfo ">9</div>
-                            <div id="qid8" class="qInfo ">8</div>
-                            <div id="qid7" class="qInfo ">7</div>
-                            <div id="qid6" class="qInfo ">6</div>
-                            <div id="qid5" class="qInfo ">5</div>
-                            <div id="qid4" class="qInfo ">4</div>
-                            <div id="qid3" class="qInfo ">3</div>
-                            <div id="qid2" class="qInfo ">2</div>
-                            <div id="qid1" class="qInfo ">1</div>
+                            <div id="qid10" class="qInfo hideQ">1</div>
+                            <div id="qid9" class="qInfo hideQ">1</div>
+                            <div id="qid8" class="qInfo hideQ">1</div>
+                            <div id="qid7" class="qInfo hideQ">1</div>
+                            <div id="qid6" class="qInfo hideQ">1</div>
+                            <div id="qid5" class="qInfo hideQ">1</div>
+                            <div id="qid4" class="qInfo hideQ">1</div>
+                            <div id="qid3" class="qInfo hideQ">1</div>
+                            <div id="qid2" class="qInfo hideQ">1</div>
+                            <div id="qid1" class="qInfo curQ">1<br>You</div>
                         </div>
                     </div>
-					<div class="h5 text-center mt-3" style="color: Black;" id="brName">IKEA Tampines Restaurant</div>
+					<div class="h5 text-center mt-3" style="color: Black;" id="brName">IKEA Alexandra Restaurant</div>
                     <div class="h5 text-center mt-3" style="color: Black;">Your Queue number is:</div>
-                    <div class="queueTicket text-center"><span class="align-text-top" style="font-size: 3.5rem;" id="queueTicketE"></span></div>
+                    <div class="queueTicket text-center"><span class="align-text-top" style="font-size: 3.5rem;" id="queueTicketE">1000</span></div>
                     <div class="card w-75 center">
                         <div class="card-header h5 text-center">
-                            Number of groups<br />
+                            Number of groups<br>
                             waiting before you:
                         </div>
-                        <div class="text-center h1 font-weight-bold" id="custWaitE"></div>
+                        <div class="text-center h1 font-weight-bold" id="custWaitE">0</div>
                     </div>
                     <div class="h5 text-left mt-2">
                         <p>We will send you a text once your table is ready. Please continue to shop while waiting. Tack!</p>
@@ -155,29 +148,29 @@
                     <div class="h4 text-center" id="EswtE"></div>
                 </div>
             </div>
-            <div class="form-row vertical-center" id="tableReady">
+            <div class="form-row vertical-center" id="tableReady" style="display: none;">
                 <div class="container-fluid mt-5">
                     <div class="h4 text-center">Your Queue number is:</div>
-                    <div class="queueTicket text-center"><span class="" style="font-size: 5.0rem;" id="queueTicketReady"></span></div>
-                    <br />
+                    <div class="queueTicket text-center"><span class="" style="font-size: 5.0rem; letter-spacing: 5px;" id="queueTicketReady"></span></div>
+                    <br>
                     <div class="h4 text-left" id="tableReadyText">
                     </div>
                 </div>
             </div>
-            <div class="form-row" id="errLink">
+            <div class="form-row" id="errLink" style="display: none;">
                 <div class="card text-white bg-danger mb-3 h3 center w-100 mt-5" style="max-width: 18rem;">
                     <div class="card-header">Warning</div>
                     <div class="card-body">
                         <p class="card-text text-center h4">
-                            Incorrect Link<br />
-                            <br />
+                            Incorrect Link<br>
+                            <br>
                             Please contact system administrator !!!
                         </p>
                     </div>
                 </div>
             </div>
             <!--Wilson 27082020 as reference message is at TimeSetting.xml-->
-            <div class="form-row" id="breaktime">
+            <div class="form-row" id="breaktime" style="display: none;">
                 <div class="h1 jumbotron vertical-center bg-white">
                     <div class="container">
                         <p class="font-weight-bold">IKEA Restaurant operating hours:</p>
@@ -185,31 +178,31 @@
                     </div>
                 </div>
             </div>
-            <div class="form-row" id="printerIdError">
+            <div class="form-row" id="printerIdError" style="display: none;">
                 <div class="card text-white bg-danger mb-3 h3 center w-100 mt-5" style="max-width: 18rem;">
                     <div class="card-header">Warning</div>
                     <div class="card-body">
                         <p class="card-text text-center h4">
-                            branchId is not set in URL !!!<br />
-                            <br />
+                            branchId is not set in URL !!!<br>
+                            <br>
                             Please contact system administrator !!!
                         </p>
                     </div>
                 </div>
             </div>
-            <div class="form-row" id="sessionTimeOut">
+            <div class="form-row" id="sessionTimeOut" style="display: none;">
                 <div class="card text-white bg-danger mb-3 h3 center w-100 mt-5" style="max-width: 18rem;">
                     <div class="card-header">Warning</div>
                     <div class="card-body">
                         <p class="card-text text-center h4">
-                            Sorry, your session has been expired!<br />
-                            <br />
+                            Sorry, your session has been expired!<br>
+                            <br>
                             You will be redirect to Main Page !!!
                         </p>
                     </div>
                 </div>
             </div>
-            <div class="form-row" id="queueFull">
+            <div class="form-row" id="queueFull" style="display: none;">
                 <div class="h1 jumbotron vertical-center bg-white">
                     <div class="container">
                         <p class="font-weight-bold">Hej,</p>
@@ -217,7 +210,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-row" id="branchClose">
+            <div class="form-row" id="branchClose" style="display: none;">
                 <div class="h1 jumbotron vertical-center bg-white">
                     <div class="container">
                         <p class="font-weight-bold">Hej,</p>
@@ -226,7 +219,7 @@
                 </div>
             </div>
             <!--Wilson 08092020 as reference when got press refresh on the browser-->
-            <div class="form-row vertical-center" id="sound">
+            <div class="form-row vertical-center" id="sound" style="display: none;">
                 <div class="h1 text-center mt-5">Your queue number have been called, click proceed</div>
                 <div>
                     <div class="form-group col-md-12 mt-5">
@@ -234,12 +227,12 @@
                     </div>
                 </div>
             </div>
-            <audio id="myAudio">
-                <source src="sound/220.wav" type="audio/wav" />
+            <audio id="myAudio" style="display: none;">
+                <source src="sound/220.wav" type="audio/wav">
             </audio>
         </div>
         <div class="footer mt-auto py-3 float-right">
-            <img src="../img/logo.svg" alt="IKEA" title="IKEA">
+            <img src="./REL Queue_files/logo.svg" alt="IKEA" title="IKEA">
         </div>
     </div>
     <script>
@@ -282,5 +275,6 @@
         })(window);
 
     </script>
-</body>
-</html>
+
+
+</body></html>
