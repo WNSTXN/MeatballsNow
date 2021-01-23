@@ -1,0 +1,189 @@
+﻿function queryAjax(_url, _type, _datatype, _data, _funcSuccess) {
+    $.ajax({
+        url: _url,
+        type: _type,
+        dataType: _datatype,
+        contentType: "application/json; charset=utf-8",
+        data: _data,
+        cache: false,
+        success: _funcSuccess
+    });
+}
+
+function getDocHeight() {
+    var D = document;
+    return Math.min(
+        Math.max(D.body.scrollHeight, D.documentElement.scrollHeight),
+        Math.max(D.body.offsetHeight, D.documentElement.offsetHeight),
+        Math.max(D.body.clientHeight, D.documentElement.clientHeight)
+    );
+}
+
+function getURLParameter(name) {
+    return decodeURI(
+        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1]
+    );
+}
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function isNumberKey(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
+        return false;
+    return true;
+}
+
+function showPage(pageid) {
+    $('#btnBack').css('display', 'block');
+
+    showElement(pageid);
+    relocateChildContainerContent(pageid);
+}
+
+function showIdleTimeOut() {
+    showElement('sessionTimeOut');
+    relocateChildContainerContent('sessionTimeOut');
+}
+
+function startIdleTimer(target) {
+    targetIdle = target;
+    $(targetIdle).bind("idle.idleTimer", function () {
+        // function you want to fire when the user goes idle
+        showElement('sessionTimeOut');
+        //relocateChildContainerContent('sessionTimeOut');
+        setTimeout('backToMain();', sessionBackMainCount);
+        $(targetIdle).idleTimer("destroy");
+    });
+
+    $(targetIdle).bind("active.idleTimer", function () {
+        // function you want to fire when the user becomes active again
+    });
+    $(targetIdle).idleTimer(sessionTimeOutCount);
+}
+
+function focusElement(id) {
+    $('#' + id).focus();
+}
+
+function relocateContainerContent() {
+    totalHeight = $('#main').height();
+    itemHeight = $('#header').height();
+    spaceHeight = kioskHeight - totalHeight - itemHeight;
+    $('#container-content').css('top', spaceHeight / 2);
+}
+
+function relocateChildContainerContent(divName) {
+    var body = document.body, html = document.documentElement;
+    var pageHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+    var mainHeight = $('#' + divName).height();
+    var spaceHeight = (pageHeight - mainHeight) / 2;
+    $('#' + divName).css('margin-top', spaceHeight);
+}
+
+function showElement(elementName) {
+    $('#boxContent').children().each(function () {
+        if ($(this).attr('id') != elementName) {
+            $(this).css('display', 'none');
+        } else {
+            $(this).css('display', 'block');
+        }
+    });
+}
+
+function checkConnMobile() {
+    $.ajax({
+        type: "POST"
+        , url: "queuekiosk.asmx/checkConn"
+        , data: ''
+        , contentType: "application/json; charset=utf-8"
+        , dataType: "json"
+        , success: function (msg) {
+            clearTimeout(onQueueTicketTimer);
+            $.unblockUI({
+                onUnblock: function () {
+                    if (msg != undefined) {
+                        if (msg.d == "TRUE") {
+                            showPage('mobile'); eTicket = "1";
+                            startIdleTimer(document);
+                            focusElement('txtMobileWalkIn');
+                            showMobileKeyboard('txtMobileWalkIn');
+                        }
+                        else
+                            createVisit('0', '', btnNoSel, custName, custNric);
+                    }
+                }
+            });
+        }
+        , error: function (xmlRequest) {
+            $.unblockUI({
+                onUnblock: function () {
+                }
+            });
+        }
+    });
+}
+
+function checkConnETicket() {
+    $.ajax({
+        type: "POST"
+        , url: "queuekiosk.asmx/checkConn"
+        , data: ''
+        , contentType: "application/json; charset=utf-8"
+        , dataType: "json"
+        , success: function (msg) {
+            clearTimeout(onQueueTicketTimer);
+            $.unblockUI({
+                onUnblock: function () {
+                    if (msg != undefined) {
+                        if (msg.d == "TRUE")
+                            showPage('eTicket');
+                        else
+                            createVisit(eTicket, '', btnNoSel, custName, custNric);
+                    }
+                }
+            });
+        }
+        , error: function (xmlRequest) {
+            $.unblockUI({
+                onUnblock: function () {
+                }
+            });
+        }
+    });
+}
+
+function getWeekDay() {
+    var d = new Date();
+    var weekday = new Array(7);
+    weekday[0] = "Sun";
+    weekday[1] = "Mon";
+    weekday[2] = "Tue";
+    weekday[3] = "Wed";
+    weekday[4] = "Thu";
+    weekday[5] = "Fri";
+    weekday[6] = "Sat";
+
+    return weekday[d.getDay()];
+}

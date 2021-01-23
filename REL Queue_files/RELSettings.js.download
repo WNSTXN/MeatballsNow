@@ -1,0 +1,103 @@
+﻿var enableCustWaiting = true;
+var updateTimer;
+var updateTimerCount = 12000;
+
+var targetIdle;
+var sessionBackMainCount = 3000;
+var sessionTimeOutCount = 120000;
+
+var cVisitId;
+var branchId = getURLParameter('branchId');
+var GeoFencing = false;
+
+Object.size = function (obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
+function countryCodeBuilder() {
+    $.blockUI({
+        message: '<img src="img/ajax-loader.gif" />'
+        , fadeIn: 1000
+        , overlayCSS: { backgroundColor: '#A0A0A0' }
+        , css: {
+            backgroundColor: 'transparent'
+            , border: 'none'
+        }
+        , centerX: true
+        , centerY: true
+    });
+    $.ajax({
+        type: "POST"
+        , url: "RELOASWS.asmx/getCountryCode"
+        , data: ''
+        , contentType: "application/json; charset=utf-8"
+        , dataType: "json"
+        , success: function (msg) {
+            $.unblockUI({
+                onUnblock: function () {
+                    if (msg != undefined) {
+                        var size = Object.size(msg.d);
+                        var s = '';
+                        for (i = 0; i < size; i++) {
+                            s += '<option value="' + msg.d[i].CountryCode + '">' + msg.d[i].CountryName+' (' + msg.d[i].CountryCode+')</option>'
+                        }
+                        $('#ddlCC').html(s);
+                    }
+                }
+            });
+        }
+        , error: function (xmlRequest) {
+            $.unblockUI({
+                onUnblock: function () {
+                    alert(xmlRequest.responseText);
+                }
+            });
+        }
+    });
+}
+
+function maxTablePaxBuilder(brId) {
+    $.blockUI({
+        message: '<img src="img/ajax-loader.gif" />'
+        , fadeIn: 1000
+        , overlayCSS: { backgroundColor: '#A0A0A0' }
+        , css: {
+            backgroundColor: 'transparent'
+            , border: 'none'
+        }
+        , centerX: true
+        , centerY: true
+    });
+    $.ajax({
+        type: "POST"
+        , url: "RELOASWS.asmx/getMaxTablePax"
+        , data: '{ brId:' + brId + '}'
+        , contentType: "application/json; charset=utf-8"
+        , dataType: "json"
+        , success: function (msg) {
+            $.unblockUI({
+                onUnblock: function () {
+                    if (msg != undefined) {
+                        //var size = Object.size(msg.d);
+                        var s = '';
+                        for (i = 0; i < msg.d; i++) {
+                            s += '<option>' + (i + 1) + '</option>';
+                        }
+                        $('#ddlPax').html(s);
+                    }
+                }
+            });
+        }
+        , error: function (xmlRequest) {
+            $.unblockUI({
+                onUnblock: function () {
+                    alert(xmlRequest.responseText);
+                }
+            });
+        }
+    });
+}

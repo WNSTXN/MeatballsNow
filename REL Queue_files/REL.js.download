@@ -1,0 +1,390 @@
+﻿var e;
+$(document).ready(function () {
+	var isValid=true;
+    if (branchId != 'null') {
+		if(branchId == 1) {
+			document.getElementById('brName').innerHTML = "IKEA Tampines Restaurant";
+		}
+		else if(branchId == 2) {
+			document.getElementById('brName').innerHTML = "IKEA Alexandra Restaurant";
+		}
+		else {
+			isValid=false;
+			showElement('errLink');
+		}
+		
+		if(isValid) {
+			showElement('loading');
+			countryCodeBuilder();
+			cVisitId = getCookie("visitId");
+			maxTablePaxBuilder(branchId);
+
+			if (cVisitId != '' && cVisitId != 'undefined' && cVisitId != '0') {
+				getTicketId(cVisitId, branchId);
+				setTimeout(qTimer, updateTimerCount);
+			}
+			else {
+				if (GeoFencing) { showElement('Main'); }
+				else {
+					checkOperationTime('ButtonMain1',function(){getCustLimit(branchId, false);});
+					//getCustLimit(branchId, false);
+				}
+			}
+		}
+    } else {
+			document.getElementById('queueTicketReady').innerHTML = 1236;
+			var s = ''
+			s += '<p class="font-weight-bold">Hej,</p>';
+			s += '<p>Your Table is ready! Please arrive at the Restaurant within 10 minutes or your table will be released</p>';
+			s += '<p>Show queue number to IKEA host to enter. See you!</p>';
+			document.getElementById('tableReadyText').innerHTML = s;
+			showElement('tableReady');
+			playAudio();
+			flashTimer();
+    }
+    $("body").on("contextmenu", function (e) {
+        return false;
+    });
+
+    e = document.getElementById("geoErrMsg");
+});
+
+function getCustLimit(brId, geo) {
+    $.blockUI({
+        message: '<img src="img/ajax-loader.gif" />'
+        , fadeIn: 1000
+        , overlayCSS: { backgroundColor: '#A0A0A0' }
+        , css: {
+            backgroundColor: 'transparent'
+            , border: 'none'
+        }
+        , centerX: true
+        , centerY: true
+    });
+    $.ajax({
+        type: "POST"
+        , url: "RELOASWS.asmx/getCustLimit"
+        , data: '{ brId:' + brId + '}'
+        , contentType: "application/json; charset=utf-8"
+        , dataType: "json"
+        , success: function (msg) {
+            $.unblockUI({
+                onUnblock: function () {
+                    if (msg != undefined) {
+                        if (msg.d.qrQueue) {
+                            if (msg.d.zeroCust) {
+                                if (brId == 1)
+                                    document.getElementById('queueFullMsg').innerHTML = "Please proceed directly to the IKEA Restaurant at Level 4";
+                                else if (brId == 2)
+                                    document.getElementById('queueFullMsg').innerHTML = "Please proceed directly to the IKEA Restaurant at Level 2";
+                                showElement('queueFull');
+                            }
+                            else {
+                                if (msg.d.maxCustOver) {
+                                    document.getElementById('queueFullMsg').innerHTML = "Our IKEA Restaurant and virtual queue is currently full. Please try again 45 mins later by refreshing this page. <br /><br /><b>Due to social distancing, no waiting or gathering outside the Restaurant.</b>";
+                                    showElement('queueFull');
+                                }
+                                else {
+                                    if (geo) {
+                                        showElement('GetQueue');
+                                    } else {
+                                        if (updateTimer) {
+                                            backToMain(); clearTimeout(updateTimer);
+                                        }
+                                        else
+                                            backToMain();
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            showElement('branchClose');
+                        }
+                    }
+                }
+            });
+        }
+        , error: function (xmlRequest) {
+            $.unblockUI({
+                onUnblock: function () {
+                    showErrorPage('systemError');
+                }
+            });
+        }
+    });
+}
+
+function backToMain() {
+    document.getElementById('txtMobile').value = "";
+    document.getElementById('geoErrMsg').innerHTML = "";
+    $('#ddlCC').prop('selectedIndex', 0);
+    $('#ddlPax').prop('selectedIndex', 0);
+    if (GeoFencing)
+        showElement('Main');
+    else
+        showElement('GetQueue');
+}
+
+function submit() {
+    var e = document.getElementById('ddlPax');
+    var pax = e.options[e.selectedIndex].text;
+
+    var c = document.getElementById('ddlCC');
+    var Ccode = c.options[c.selectedIndex].value;
+
+    if ($('#txtMobile').val() != '') {
+        //alert('Mobile :' + Ccode + $('#txtMobile').val())
+        createVisit(Ccode + $('#txtMobile').val(), pax, 'btn' + branchId);
+    }
+    else {
+        focusElement('txtMobile');
+    }
+}
+
+function createVisit(mobile, numberOfPax, btnNam) {
+    $.blockUI({
+        message: '<img src="img/ajax-loader.gif" />'
+        , fadeIn: 1000
+        , overlayCSS: { backgroundColor: '#A0A0A0' }
+        , css: {
+            backgroundColor: 'transparent'
+            , border: 'none'
+        }
+        , centerX: true
+        , centerY: true
+    });
+    $.ajax({
+        type: "POST"
+        , url: "RELOASWS.asmx/createVisit"
+        , data: '{ brId:' + branchId + ', btnName:"' + btnNam + '", mobile:"' + mobile + '", numberOfPax:' + numberOfPax + '}'
+        , contentType: "application/json; charset=utf-8"
+        , dataType: "json"
+        , success: function (msg) {
+            $.unblockUI({
+                onUnblock: function () {
+                    if (msg != undefined) {
+                        if (msg.d.queueNumberId == 0) {
+                            if (msg.d.errMsg == 'ERROR') {
+                                showErrorPage('systemError');
+                                setTimeout('backToMain();', 3000);
+                            } else if (msg.d.errMsg == "FULL") {
+                                if (msg.d.remainPax > 0)
+                                    modalAlert('The number of pax enter has exceeded, current remaining pax left : ' + msg.d.remainPax);
+                                else
+                                    getCustLimit(branchId, false);
+                            }
+                        }
+                        else {
+                            setCookie('visitId', msg.d.queueNumberId, 1);
+                            document.getElementById('queueTicketE').innerHTML = msg.d.queueNumber;
+                            document.getElementById('queuePax').innerHTML = 'Table for ' + msg.d.parameter.numberOfPax + ' person';
+
+                            if (msg.d.custWait <= 10)
+                                document.getElementById('queuePosText').innerHTML = "Your Queue position is at:";
+                            else
+                                document.getElementById('queuePosText').innerHTML = "There are more then 10 customers waiting in front of you.";
+
+                            if (enableCustWaiting)
+                                document.getElementById('custWaitE').innerHTML = msg.d.custWait;
+
+                            showElement('collectQueueETicket');
+                            updateCurQ(msg.d.custWaitTotal, msg.d.custWaitTotal);
+                            updateTimer = setTimeout(qTimer, updateTimerCount);
+                        }
+                    }
+                }
+            });
+        }
+        , error: function (xmlRequest) {
+            $.unblockUI({
+                onUnblock: function () {
+                    showErrorPage('systemError');
+                    setTimeout('backToMain();', 3000);
+                }
+            });
+        }
+    });
+}
+
+var countgetTicket = 0;
+function getTicketId(visitId, brId) 
+{
+	document.getElementById('queueTicketReady').innerHTML = 2090;
+	var s = ''
+	s += '<p class="font-weight-bold">Hej,</p>';
+	s += '<p>Your Table is ready! Please arrive at the Restaurant within 10 minutes or your table will be released</p>';
+	s += '<p>Show queue number to IKEA host to enter. See you!</p>';
+	document.getElementById('tableReadyText').innerHTML = s;
+	showElement('tableReady');
+	flashTimer();
+}
+
+function cancelClick() {
+    $("#deleteModal").modal('show');
+}
+
+function cancelQueue() {
+    $.blockUI({
+        message: '<img src="img/ajax-loader.gif" />'
+        , fadeIn: 1000
+        , overlayCSS: { backgroundColor: '#A0A0A0' }
+        , css: {
+            backgroundColor: 'transparent'
+            , border: 'none'
+        }
+        , centerX: true
+        , centerY: true
+    });
+    $.ajax({
+        type: "POST"
+        , url: "RELOASWS.asmx/cancelQueue"
+        , data: '{ visitId:"' + getCookie("visitId") + '", brId:' + branchId + '}'
+        , contentType: "application/json; charset=utf-8"
+        , dataType: "json"
+        , success: function (msg) {
+            $.unblockUI({
+                onUnblock: function () {
+                    if (msg != undefined) {
+                        if (msg.d.status) {
+                            setCookie('visitId', '', 1); countgetTicket = 0; backToMain(); clearTimeout(updateTimer);
+                        }
+                        else {
+                            document.getElementById("deleteErrMsg").innerHTML = 'Unable to remove due to : ' + msg.d.reason;
+                            $("#deleteErrModal").modal('show');
+                            qTimer();
+                        }
+                    }
+                }
+            });
+        }
+        , error: function (xmlRequest) {
+            $.unblockUI({
+                onUnblock: function () {
+                    showErrorPage('systemError');
+                }
+            });
+        }
+    });
+}
+
+function updateCurQ(totalCust, curPos) {
+    var totalSlot = 10;
+
+    for (i = 1; i <= totalSlot; i++) {
+        $('#qid' + i).removeClass('hideQ');
+        $('#qid' + i).removeClass('curQ');
+
+        if (totalCust != 0) {
+            if (i == curPos) {
+                $('#qid' + i).addClass('curQ');
+                document.getElementById('qid' + i).innerHTML = i + "<br/>You";
+            }
+            else {
+                document.getElementById('qid' + i).innerHTML = i;
+            }
+
+            totalCust = totalCust - 1;
+        }
+        else {
+            $('#qid' + i).addClass('hideQ');
+            document.getElementById('qid' + i).innerHTML = 1;
+        }
+    }
+}
+
+function qTimer() {
+    clearTimeout(updateTimer);
+    var qVisitId = getCookie("visitId");
+    if (qVisitId != '')
+        getTicketId(qVisitId, branchId);
+    else
+        getCustLimit(branchId, false);
+    updateTimer = setTimeout(qTimer, updateTimerCount);
+}
+
+var flashQTimer; var toggleFlash = true;
+function flashTimer() {
+    clearTimeout(flashQTimer);
+    if (toggleFlash) {
+        $("#queueTicketReady").css({ "color": "white" });
+        toggleFlash = false;
+    }
+    else {
+        $("#queueTicketReady").css({ "color": "black" });
+        toggleFlash = true;
+    }
+
+    flashQTimer = setTimeout(flashTimer, 1000);
+}
+
+function showErrorPage(e) {
+    showElement(e);
+    //relocateChildContainerContent(e);
+    $('#pnlViewAddCart').css('display', 'none');
+}
+
+function modalAlert(msg) {
+    document.getElementById('alertMsg').innerHTML = msg;
+    $("#alertModal").modal('show');
+}
+
+function checkOperationTime(btnNo, funcIfInOps) {
+    $.blockUI({
+        message: '<img src="img/ajax-loader.gif" />'
+        , fadeIn: 1000
+        , overlayCSS: { backgroundColor: '#A0A0A0' }
+        , css: {
+            backgroundColor: 'transparent'
+            , border: 'none'
+        }
+        , centerX: true
+        , centerY: true
+    });
+    $.ajax({
+        type: "POST"
+        , url: "RELOASWS.asmx/getOpstime"
+        , data: '{ brId:' + branchId + ', btnName:"' + btnNo + '"}'
+        , contentType: "application/json; charset=utf-8"
+        , dataType: "json"
+        , success: function (msg) {
+            $.unblockUI({
+                onUnblock: function () {
+                    if (msg.d.IsInOperation != undefined) {
+                        if (!msg.d.IsInOperation) {
+                            $('#breaktimeMsg').html(msg.d.Message);
+                            showErrorPage('breaktime');
+                        } else {
+                            funcIfInOps();
+                        }
+                    }
+                }
+            });
+        }
+        , error: function (xmlRequest) {
+            $.unblockUI({
+                onUnblock: function () {
+                    showErrorPage('systemError');
+                    setTimeout('backToMain();', 3000);
+                }
+            });
+        }
+    });
+}
+
+function playAudio() {
+    var x = document.getElementById("myAudio");
+
+    var playedPromise = x.play();
+    if (playedPromise) {
+        playedPromise.catch((e) => {
+            console.log(e)
+            if (e.name === 'NotAllowedError' || e.name === 'NotSupportedError') {
+                console.log(e.name);
+                //clearTimeout(updateTimer);
+                showElement('sound');
+            }
+        }).then(() => {
+            console.log("playing sound !!!");
+        });
+    }
+}
