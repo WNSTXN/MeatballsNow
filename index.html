@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>
+	REL Queue
+</title><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" /><link rel="stylesheet" href="css/bootstrap.min.css" />
+    <script type="text/javascript" src="Scripts/modernizr.js"></script>
+    <script type="text/javascript" src="Scripts/jquery-3.5.1.slim.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="Scripts/jquery-ui-1.9.0.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.blockUI.js"></script>
+    <script type="text/javascript" src="Scripts/idle-timer.js"></script>
+    <script type="text/javascript" src="Scripts/popper.min.js"></script>
+    <script type="text/javascript" src="Scripts/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="css/font-awesome.min.css" /><link rel="stylesheet" href="css/styleRes.css" />
+    <script type="text/javascript" src="Scripts/default.js"></script>
+    <script type="text/javascript" src="Scripts/util.js"></script>
+    <script type="text/javascript" src="Scripts/REL.js"></script>
+    <script type="text/javascript" src="Scripts/RELSettings.js"></script>
+    <script type="text/javascript" src="Scripts/RELGeoLoc.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Cancel Queue Number</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-size-1-2">This will remove your queue number from the system. Do you want to proceed?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="cancelQueue();">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="deleteErrModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Alert</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-size-1-2" id="deleteErrMsg"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!--Wilson 16082020 as reference-->
+                        <h5 class="text-size-3" style="color: Red;" id="alert">Alert!</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-size-1-5" id="alertMsg"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="boxContent">
+            <div id="loading"></div>
+            <div class="form-row vertical-center" id="Main">
+                <div class="container-fluid mt-5">
+                    <div class="h1 text-center">
+                        Welcome to<br />
+                        IKEA Restaurant
+                    </div>
+                </div>
+                <div class="text-center mt-5 pt-5">
+                    <div class="h3">Kindly enable your location service before clicking "Begin"</div>
+                    <button class="btn btn-primary btn-lg mt-5" onclick="checkOperationTime('ButtonMain1',function(){getLocation();});">Begin</button>
+                </div>
+                <div class="h3 text-danger mt-2 text-center" id="geoErrMsg"></div>
+            </div>
+            <div class="form-row vertical-center" id="GetQueue">
+                <div class="container-fluid mt-5">
+                    <div class="h1 text-left">
+                        <p class="font-weight-bold">Hej,</p>
+                        <p class="h4">Our IKEA Restaurant is currently full. Please register below to join the queue. We will send you a text once your table is ready.</p>
+                    </div>
+                </div>
+                <br />
+                <div class="container">
+                    <div class="h5">Mobile number</div>
+                    <div class="input-group input-group">
+                        <select id="ddlCC" class="form-control">
+                            <option value="65">Singapore (65)</option>
+                        </select>
+                        <input id="txtMobile" type="number" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off" placeholder="Mobile" pattern="\d*">
+                    </div>
+                    <div class="input-group input-group mt-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-white rel-color-1">Number of People</span>
+                        </div>
+                        <select id="ddlPax" class="form-control">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-lg btn-block rel-color-1 mt-3" onclick="checkOperationTime('ButtonMain1',function(){playAudio(); submit();});">Submit</button>
+                </div>
+            </div>
+            <div class="form-row" id="collectQueueETicket">
+                <div class="container-fluid mt-5">
+                    <div class="float-right w-25">
+                        <button class="btn btn-primary" onclick="cancelClick();">Cancel</button>
+                    </div>
+                    <div contenteditable="true" class="float-left h5 text-center w-75" id="queuePax">Table for : 4 person</div>
+                    <br /><br />
+                    <div class="card">
+                        <div contenteditable="true" class="card-header h5 text-center" id="queuePosText" style="color: Black;">Your Queue position is at:</div>
+                        <div style="width: 100%; display: flex; justify-content: center;">
+                            <div id="qid10" class="qInfo ">10</div>
+                            <div id="qid9" class="qInfo ">9</div>
+                            <div id="qid8" class="qInfo ">8</div>
+                            <div id="qid7" class="qInfo ">7</div>
+                            <div id="qid6" class="qInfo ">6</div>
+                            <div id="qid5" class="qInfo ">5</div>
+                            <div id="qid4" class="qInfo ">4</div>
+                            <div id="qid3" class="qInfo ">3</div>
+                            <div id="qid2" class="qInfo ">2</div>
+                            <div id="qid1" class="qInfo ">1</div>
+                        </div>
+                    </div>
+					<div class="h5 text-center mt-3" style="color: Black;" id="brName">IKEA Tampines Restaurant</div>
+                    <div class="h5 text-center mt-3" style="color: Black;">Your Queue number is:</div>
+                    <div class="queueTicket text-center"><span class="align-text-top" style="font-size: 3.5rem;" id="queueTicketE"></span></div>
+                    <div class="card w-75 center">
+                        <div class="card-header h5 text-center">
+                            Number of groups<br />
+                            waiting before you:
+                        </div>
+                        <div class="text-center h1 font-weight-bold" id="custWaitE"></div>
+                    </div>
+                    <div class="h5 text-left mt-2">
+                        <p>We will send you a text once your table is ready. Please continue to shop while waiting. Tack!</p>
+                        <p class="h4 font-weight-bold">Due to social distancing, no waiting or gathering outside the Restaurant.</p>
+                    </div>
+                    <div class="h4 text-center" id="EswtE"></div>
+                </div>
+            </div>
+            <div class="form-row vertical-center" id="tableReady">
+                <div class="container-fluid mt-5">
+                    <div class="h4 text-center">Your Queue number is:</div>
+                    <div class="queueTicket text-center"><span class="" style="font-size: 5.0rem;" id="queueTicketReady"></span></div>
+                    <br />
+                    <div class="h4 text-left" id="tableReadyText">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" id="errLink">
+                <div class="card text-white bg-danger mb-3 h3 center w-100 mt-5" style="max-width: 18rem;">
+                    <div class="card-header">Warning</div>
+                    <div class="card-body">
+                        <p class="card-text text-center h4">
+                            Incorrect Link<br />
+                            <br />
+                            Please contact system administrator !!!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!--Wilson 27082020 as reference message is at TimeSetting.xml-->
+            <div class="form-row" id="breaktime">
+                <div class="h1 jumbotron vertical-center bg-white">
+                    <div class="container">
+                        <p class="font-weight-bold">IKEA Restaurant operating hours:</p>
+                        <p class="h3" id="breaktimeMsg"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" id="printerIdError">
+                <div class="card text-white bg-danger mb-3 h3 center w-100 mt-5" style="max-width: 18rem;">
+                    <div class="card-header">Warning</div>
+                    <div class="card-body">
+                        <p class="card-text text-center h4">
+                            branchId is not set in URL !!!<br />
+                            <br />
+                            Please contact system administrator !!!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" id="sessionTimeOut">
+                <div class="card text-white bg-danger mb-3 h3 center w-100 mt-5" style="max-width: 18rem;">
+                    <div class="card-header">Warning</div>
+                    <div class="card-body">
+                        <p class="card-text text-center h4">
+                            Sorry, your session has been expired!<br />
+                            <br />
+                            You will be redirect to Main Page !!!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" id="queueFull">
+                <div class="h1 jumbotron vertical-center bg-white">
+                    <div class="container">
+                        <p class="font-weight-bold">Hej,</p>
+                        <p class="h2" id="queueFullMsg"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" id="branchClose">
+                <div class="h1 jumbotron vertical-center bg-white">
+                    <div class="container">
+                        <p class="font-weight-bold">Hej,</p>
+                        <p class="h2">IKEA Restaurant is now closed. We will continue serving your favorite dish tomorrow morning. See you!</p>
+                    </div>
+                </div>
+            </div>
+            <!--Wilson 08092020 as reference when got press refresh on the browser-->
+            <div class="form-row vertical-center" id="sound">
+                <div class="h1 text-center mt-5">Your queue number have been called, click proceed</div>
+                <div>
+                    <div class="form-group col-md-12 mt-5">
+                        <button class="btn form-control font-weight-bold mainButton" onclick="playAudio(); getTicketId(cVisitId, branchId);">Proceed</button>
+                    </div>
+                </div>
+            </div>
+            <audio id="myAudio">
+                <source src="sound/220.wav" type="audio/wav" />
+            </audio>
+        </div>
+        <div class="footer mt-auto py-3 float-right">
+            <img src="../img/logo.svg" alt="IKEA" title="IKEA">
+        </div>
+    </div>
+    <script>
+        (function (global) {
+
+            if (typeof (global) === "undefined") {
+                throw new Error("window is undefined");
+            }
+
+            var _hash = "!";
+            var noBackPlease = function () {
+                global.location.href += "#";
+
+                // making sure we have the fruit available for juice (^__^)
+                global.setTimeout(function () {
+                    global.location.href += "!";
+                }, 50);
+            };
+
+            global.onhashchange = function () {
+                if (global.location.hash !== _hash) {
+                    global.location.hash = _hash;
+                }
+            };
+
+            global.onload = function () {
+                noBackPlease();
+
+                // disables backspace on page except on input fields and textarea..
+                document.body.onkeydown = function (e) {
+                    var elm = e.target.nodeName.toLowerCase();
+                    if (e.which === 8 && (elm !== 'input' && elm !== 'textarea')) {
+                        e.preventDefault();
+                    }
+                    // stopping event bubbling up the DOM tree..
+                    e.stopPropagation();
+                };
+            }
+
+        })(window);
+
+    </script>
+</body>
+</html>
