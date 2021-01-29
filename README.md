@@ -1,4 +1,4 @@
 # MeatballsNow
-Hungry? Want your goddamn meatballs? Going to piss your pants? Maybe shit and cum?
+Want your meatballs? Gonna piss your pants maybe? Maybe shit and cum?
 
 https://meatballsnow.netlify.app/
