@@ -1,2 +1,2 @@
 # MeatballsNow
-Want your meatballs? Gonna piss your pants maybe? Maybe shit and cum?
+IKEA Restaurant's HTML queue template in Singapore.
