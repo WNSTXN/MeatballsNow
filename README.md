@@ -1,2 +1,3 @@
-# MeatballsNow
-Deprecated IKEA Restaurant's HTML queue template in Singapore.
+# MeatballsNow [DEPRECATED]
+
+IKEA Restaurant's HTML queue template in Singapore.
